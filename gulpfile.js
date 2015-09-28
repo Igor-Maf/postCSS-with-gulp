@@ -1,16 +1,21 @@
+'use strict';
+
 var gulp = require('gulp'),
 	wiredep = require('wiredep').stream,
-	concatCSS = require('gulp-concat-css')
-	minifyCSS = require('gulp-minify-css')
-	rename = require('gulp-rename');
+	minifyCSS = require('gulp-minify-css'),
+	concatCSS = require('gulp-concat-css'),
+	rename = require('gulp-rename'),
+	autoprefixer = require('gulp-autoprefixer'),
+	sourcemaps = require('gulp-sourcemaps'),
+	liverload = require('gulp-livereload'),
+	connect = require('gulp-connect');
 
 
 /**
- * For automatically install the all bower 
- * components which were in the bower.json
+ * bower.json
  */ 
 gulp.task('bower', function() {
-	gulp.src('./app/index.html')
+	gulp.src('./app/*.html')
 		.pipe(wiredep({
 			directory: 'app/bower_components'	
 		}))
@@ -19,14 +24,36 @@ gulp.task('bower', function() {
 
 
 /**
- * The task for operations with the CSS files
+ * CSS
  */
-gulp.task('styles', function() {
+gulp.task('css', function() {
 	gulp.src('./app/css/**/*.css')
+		.pipe(autoprefixer('last 4 versions', '> 1%', 'ie 9'))
 		.pipe(concatCSS('styles.css'))
 		.pipe(minifyCSS())
 		.pipe(rename('styles.min.css'))
-		.pipe(gulp.dest('app/dist/css/'));
+		.pipe(gulp.dest('app/dist/css/'))
+		.pipe(connect.reload());
+});
+
+
+/**
+ * HTML
+ */
+gulp.task('html', function() {
+	gulp.src('./app/**/*.html')
+		.pipe(connect.reload());
+});
+
+
+/**
+ * Serve connection
+ */
+gulp.task('connect', function() {
+	connect.server({
+		root: './app',
+		livereload: true
+	});
 });
 
 
@@ -35,8 +62,15 @@ gulp.task('styles', function() {
  */
 gulp.task('watch', function() {
 	gulp.watch('bower.json', ['bower'])
-	gulp.watch('./app/css/**/*.css', ['styles'])
+	gulp.watch('./app/css/**/*.css', ['css'])
+	gulp.watch('./app/*.html', ['html'])
 });
+
+
+/**
+ * Serve task
+ */
+gulp.task('serve', ['connect', 'html', 'css', 'watch']);
 
 
 /**

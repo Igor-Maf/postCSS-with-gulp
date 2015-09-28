@@ -6,19 +6,20 @@ body {
 }
 
 section {
-	padding: 15px 20px;
+	padding: $indent 20px;
 }
 
 aside {
 	display: inline-block;
-	width: 30%;
-	margin-right: -4px;
 	vertical-align: top;
+	margin-right: -4px;
+	width: 30%;
 }
 
 .content {
 	display: inline-block;
-	width: 65%;
-	margin: 0 -4px 0 5%;
 	vertical-align: top;
+	margin-right: -4px;
+	width: 65%;
+	margin-left: 15px;
 }
